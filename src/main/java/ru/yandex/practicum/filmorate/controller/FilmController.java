@@ -16,6 +16,10 @@ import java.util.*;
 @Slf4j
 public class FilmController {
 
+    private static final int MAX_DESCRIPTION_LENGTH = 200;
+    private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    private static final long MIN_DURATION = 1L;
+
     private final Map<Long, Film> films = new HashMap<>();
     private long nextId = 1;
 
@@ -70,18 +74,18 @@ public class FilmController {
             throw new ValidationException("Название фильма не может быть пустым");
         }
 
-        if (film.getDescription() != null && film.getDescription().length() > 200) {
-            log.error("Максимальная длина описания - 200 символов");
-            throw new ValidationException("Максимальная длина описания - 200 символов");
+        if (film.getDescription() != null && film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
+            log.error("Максимальная длина описания - {} символов", MAX_DESCRIPTION_LENGTH);
+            throw new ValidationException("Максимальная длина описания - " + MAX_DESCRIPTION_LENGTH + " символов");
         }
 
         if (film.getReleaseDate() != null && film.getReleaseDate()
-                .isBefore(LocalDate.of(1895, 12, 28))) {
+                .isBefore(MIN_RELEASE_DATE)) {
             log.error("Дата релиза не может быть раньше 28 декабря 1895 года");
             throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года");
         }
 
-        if (film.getDuration() != null && film.getDuration() <= 0) {
+        if (film.getDuration() != null && film.getDuration() <= MIN_DURATION) {
             log.error("Продолжительность фильма должна быть положительным числом");
             throw new ValidationException("Продолжительность фильма должна быть положительным числом");
         }

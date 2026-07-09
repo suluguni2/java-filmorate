@@ -13,6 +13,7 @@ import java.util.*;
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
+    private static final String EMAIL_PATTERN = "@";
 
     private final Map<Long, User> users = new HashMap<>();
     private long nextId = 1;
@@ -78,9 +79,9 @@ public class UserController {
             log.error("Электронная почта не может быть пустой");
             throw new ValidationException("Электронная почта не может быть пустой");
         }
-        if (!user.getEmail().contains("@")) {
-            log.error("Электронная почта должна содержать символ @");
-            throw new ValidationException("Электронная почта должна содержать символ @");
+        if (!user.getEmail().contains(EMAIL_PATTERN)) {
+            log.error("Электронная почта должна содержать символ {}", EMAIL_PATTERN);
+            throw new ValidationException("Электронная почта должна содержать символ " + EMAIL_PATTERN);
         }
 
         if (user.getLogin() == null || user.getLogin().isBlank()) {
