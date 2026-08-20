@@ -34,27 +34,27 @@ public class FilmService {
         filmStorage.removeLike(filmId, userId);
     }
 
-    public int getLikesCount(long filmId) {
-        return filmStorage.getLikesCount(filmId);
-    }
-
     public List<Film> getPopularFilms(int count) {
         return filmStorage.getPopularFilms(count);
     }
 
-    public Collection<Film> findAll(){
+    public Collection<Film> findAll() {
         return filmStorage.findAll();
     }
 
-    public Film create(Film film){
+    public Film findById(long filmId) {
+        return filmStorage.findById(filmId);
+    }
+
+    public Film create(Film film) {
         return filmStorage.create(film);
     }
 
-    public Film update(Film film){
+    public Film update(Film film) {
         return filmStorage.update(film);
     }
 
-    public void clearFilms(){
+    public void clearFilms() {
         filmStorage.clearFilms();
     }
 }

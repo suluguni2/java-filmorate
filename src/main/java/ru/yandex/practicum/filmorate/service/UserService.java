@@ -26,20 +26,25 @@ public class UserService {
     }
 
     public List<User> getCommonFriends(long userId, long otherUserId) {
-        return userStorage.getCommonFriends(userId,  otherUserId);
+        return userStorage.getCommonFriends(userId, otherUserId);
     }
 
-    public Collection<User> findAll(){
+    public Collection<User> findAll() {
         return userStorage.findAll();
     }
-    public User create(User user){
+    public User findById(long userId) {
+        return userStorage.findById(userId);
+    }
+
+    public User create(User user) {
         return userStorage.create(user);
     }
-    public User update(User user){
+
+    public User update(User user) {
         return userStorage.update(user);
     }
 
-    public void clearUsers(){
+    public void clearUsers() {
         userStorage.clearUsers();
     }
 }

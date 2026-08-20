@@ -62,9 +62,11 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> getPopularFilms(int count) {
-        return films.values()
-                .stream()
-                .sorted(Comparator.comparingInt((Film film) -> this.getLikesCount(film.getId())).reversed())
+        return films.values().stream()
+                .sorted(Comparator.comparingInt(
+                        (Film film) ->
+                                filmLikes.getOrDefault(film.getId(), Collections.emptySet()).size()
+                ).reversed())
                 .limit(count)
                 .toList();
     }
@@ -73,6 +75,15 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Collection<Film> findAll() {
         log.info("Получен запрос на получение всех фильмов");
         return films.values();
+    }
+
+    @Override
+    public Film findById(long filmId){
+        if (!films.containsKey(filmId)) {
+            log.error("Фильм с id={} не найден", filmId);
+            throw new NotFoundException("Фильм с id=" + filmId + " не найден");
+        }
+        return films.get(filmId);
     }
 
     @Override

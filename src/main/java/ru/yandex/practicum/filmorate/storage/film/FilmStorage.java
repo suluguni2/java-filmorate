@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface FilmStorage {
     Collection<Film> findAll();
+    Film findById(long filmId);
     Film create(Film film);
     Film update(Film film);
     void clearFilms();

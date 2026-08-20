@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserController.class)
 @Import({UserService.class, InMemoryUserStorage.class})
+
 class UserControllerTest {
 
     @Autowired

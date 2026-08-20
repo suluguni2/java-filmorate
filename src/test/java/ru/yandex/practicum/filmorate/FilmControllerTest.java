@@ -21,8 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(FilmController.class)
-@Import({FilmService.class, UserService.class,
-        InMemoryFilmStorage.class, InMemoryUserStorage.class})
+@Import({FilmService.class, UserService.class, InMemoryFilmStorage.class, InMemoryUserStorage.class})
 class FilmControllerTest {
 
     @Autowired

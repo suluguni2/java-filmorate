@@ -31,11 +31,11 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public void addFriend(long userId, long friendId) {
-        if (!users.containsKey(userId)) {
+        if (!isUserExist(userId)) {
             log.error("Пользователь с id={} не найден", userId);
             throw new NotFoundException("Пользователь с id=" + userId + " не найден");
         }
-        if (!users.containsKey(friendId)) {
+        if (!isUserExist(friendId)) {
             log.error("Пользователь с id={} не найден", friendId);
             throw new NotFoundException("Пользователь с id=" + friendId + " не найден");
         }
@@ -46,7 +46,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<User> getFriends(long userId) {
-        if (!users.containsKey(userId)) {
+        if (!isUserExist(userId)) {
             log.error("Пользователь с id={} не найден", userId);
             throw new NotFoundException("Пользователь с id=" + userId + " не найден");
         }
@@ -63,11 +63,11 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public void removeFriend(long userId, long friendId) {
-        if (!users.containsKey(userId)) {
+        if (!isUserExist(userId)) {
             log.error("Пользователь с id={} не найден", userId);
             throw new NotFoundException("Пользователь с id=" + userId + " не найден");
         }
-        if (!users.containsKey(friendId)) {
+        if (!isUserExist(friendId)) {
             log.error("Пользователь с id={} не найден", friendId);
             throw new NotFoundException("Пользователь с id=" + friendId + " не найден");
         }
@@ -81,11 +81,11 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<User> getCommonFriends(long userId, long otherUserId) {
-        if (!users.containsKey(userId)) {
+        if (!isUserExist(userId)) {
             log.error("Пользователь с id={} не найден", userId);
             throw new NotFoundException("Пользователь с id=" + userId + " не найден");
         }
-        if (!users.containsKey(otherUserId)) {
+        if (!isUserExist(otherUserId)) {
             log.error("Пользователь с id={} не найден", otherUserId);
             throw new NotFoundException("Пользователь с id=" + otherUserId + " не найден");
         }
@@ -105,6 +105,15 @@ public class InMemoryUserStorage implements UserStorage {
     public Collection<User> findAll() {
         log.info("Получен запрос на получение всех пользователей");
         return users.values();
+    }
+
+    @Override
+    public User findById(long userId){
+        if (!isUserExist(userId)) {
+            log.error("Пользователь с id={} не найден", userId);
+            throw new NotFoundException("Пользователь с id=" + userId + " не найден");
+        }
+        return users.get(userId);
     }
 
     @Override
