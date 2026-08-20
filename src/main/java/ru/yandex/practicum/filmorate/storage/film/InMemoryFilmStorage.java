@@ -20,6 +20,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     private long nextId = 1;
     private final Map<Long, Set<Long>> filmLikes = new HashMap<>();
 
+    @Override
     public void clearFilms() {
         films.clear();
         nextId = 1;

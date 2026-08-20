@@ -3,29 +3,43 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    final private UserStorage inMemoryUserStorage;
+    final private UserStorage userStorage;
 
     public void addFriend(long userId, long friendId) {
-        inMemoryUserStorage.addFriend(userId, friendId);
+        userStorage.addFriend(userId, friendId);
     }
 
     public void removeFriend(long userId, long friendId) {
-        inMemoryUserStorage.removeFriend(userId, friendId);
+        userStorage.removeFriend(userId, friendId);
     }
 
     public List<User> getFriends(long userId) {
-        return inMemoryUserStorage.getFriends(userId);
+        return userStorage.getFriends(userId);
     }
 
     public List<User> getCommonFriends(long userId, long otherUserId) {
-        return inMemoryUserStorage.getCommonFriends(userId,  otherUserId);
+        return userStorage.getCommonFriends(userId,  otherUserId);
+    }
+
+    public Collection<User> findAll(){
+        return userStorage.findAll();
+    }
+    public User create(User user){
+        return userStorage.create(user);
+    }
+    public User update(User user){
+        return userStorage.update(user);
+    }
+
+    public void clearUsers(){
+        userStorage.clearUsers();
     }
 }

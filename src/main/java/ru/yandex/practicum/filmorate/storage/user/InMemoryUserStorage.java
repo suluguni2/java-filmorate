@@ -18,11 +18,13 @@ public class InMemoryUserStorage implements UserStorage {
     private long nextId = 1;
     private final Map<Long, Set<Long>> userFriends = new HashMap<>();
 
+    @Override
     public void clearUsers() {
         users.clear();
         nextId = 1;
     }
 
+    @Override
     public boolean isUserExist(long userId) {
         return users.containsKey(userId);
     }

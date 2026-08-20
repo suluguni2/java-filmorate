@@ -9,6 +9,7 @@ public interface FilmStorage {
     Collection<Film> findAll();
     Film create(Film film);
     Film update(Film film);
+    void clearFilms();
 
     void addLike(long filmId, long userId);
     void removeLike(long filmId, long userId);

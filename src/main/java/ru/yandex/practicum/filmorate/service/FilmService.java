@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -39,5 +40,21 @@ public class FilmService {
 
     public List<Film> getPopularFilms(int count) {
         return filmStorage.getPopularFilms(count);
+    }
+
+    public Collection<Film> findAll(){
+        return filmStorage.findAll();
+    }
+
+    public Film create(Film film){
+        return filmStorage.create(film);
+    }
+
+    public Film update(Film film){
+        return filmStorage.update(film);
+    }
+
+    public void clearFilms(){
+        filmStorage.clearFilms();
     }
 }
