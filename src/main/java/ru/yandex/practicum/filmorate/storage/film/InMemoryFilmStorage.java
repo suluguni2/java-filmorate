@@ -33,6 +33,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new NotFoundException("Фильм с id=" + filmId + " не найден");
         }
         filmLikes.computeIfAbsent(filmId, k -> new HashSet<>()).add(userId);
+        log.info("Пользователь {} поставил лайк фильму {}", userId, filmId);
     }
 
     @Override
@@ -45,10 +46,12 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (userIds != null) {
             userIds.remove(userId);
         }
+        log.info("Пользователь с id={} убирает лайк у фильма с id={}", userId, filmId);
     }
 
     @Override
     public int getLikesCount(long filmId) {
+        log.info("Запрошено количество лайков фильма: {}", filmId);
         if (!films.containsKey(filmId)) {
             log.error("Фильм с id={} не найден", filmId);
             throw new NotFoundException("Фильм с id=" + filmId + " не найден");
@@ -57,11 +60,13 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (userIds == null) {
             return 0;
         }
+        log.debug("Количество лайков фильма: {} = {}", filmId, userIds.size());
         return userIds.size();
     }
 
     @Override
     public List<Film> getPopularFilms(int count) {
+        log.info("Запрошен список популярных фильмов, лимит: {}", count);
         return films.values().stream()
                 .sorted(Comparator.comparingInt(
                         (Film film) ->

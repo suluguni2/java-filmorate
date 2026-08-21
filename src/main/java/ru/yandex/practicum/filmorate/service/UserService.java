@@ -32,6 +32,7 @@ public class UserService {
     public Collection<User> findAll() {
         return userStorage.findAll();
     }
+
     public User findById(long userId) {
         return userStorage.findById(userId);
     }

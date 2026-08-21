@@ -42,10 +42,12 @@ public class InMemoryUserStorage implements UserStorage {
 
         userFriends.computeIfAbsent(userId, id -> new HashSet<>()).add(friendId);
         userFriends.computeIfAbsent(friendId, id -> new HashSet<>()).add(userId);
+        log.info("Пользователи {} и {} стали друзьями", userId, friendId);
     }
 
     @Override
     public List<User> getFriends(long userId) {
+        log.info("Запрошен список друзей пользователя с id={}", userId);
         if (!isUserExist(userId)) {
             log.error("Пользователь с id={} не найден", userId);
             throw new NotFoundException("Пользователь с id=" + userId + " не найден");
@@ -55,7 +57,6 @@ public class InMemoryUserStorage implements UserStorage {
         if (friendsIds == null) {
             return Collections.emptyList();
         }
-
         return friendsIds.stream()
                 .map(users::get)
                 .toList();
@@ -77,10 +78,12 @@ public class InMemoryUserStorage implements UserStorage {
         if (userFriends.get(friendId) != null) {
             userFriends.get(friendId).remove(userId);
         }
+        log.info("Пользователь с id={} удаляет из друзей пользователя с id={}", userId, friendId);
     }
 
     @Override
     public List<User> getCommonFriends(long userId, long otherUserId) {
+        log.info("Запрошен список общих друзей для пользователей {} и {}", userId, otherUserId);
         if (!isUserExist(userId)) {
             log.error("Пользователь с id={} не найден", userId);
             throw new NotFoundException("Пользователь с id=" + userId + " не найден");
@@ -108,7 +111,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User findById(long userId){
+    public User findById(long userId) {
         if (!isUserExist(userId)) {
             log.error("Пользователь с id={} не найден", userId);
             throw new NotFoundException("Пользователь с id=" + userId + " не найден");
