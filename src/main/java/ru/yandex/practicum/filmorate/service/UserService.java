@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    final private UserStorage userStorage;
+    private final UserStorage userStorage;
 
     public void addFriend(long userId, long friendId) {
         userStorage.addFriend(userId, friendId);

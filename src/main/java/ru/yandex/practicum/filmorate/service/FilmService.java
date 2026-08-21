@@ -15,8 +15,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class FilmService {
-    final private FilmStorage filmStorage;
-    final private UserStorage userStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     public void addLike(long filmId, long userId) {
         if (!userStorage.isUserExist(userId)) {
