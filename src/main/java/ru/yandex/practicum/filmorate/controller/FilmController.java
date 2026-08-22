@@ -21,6 +21,11 @@ public class FilmController {
         filmService.clearFilms();
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteFilm(@PathVariable long id) {
+        filmService.deleteFilm(id);
+    }
+
     @GetMapping
     public Collection<Film> findAll() {
         return filmService.findAll();
