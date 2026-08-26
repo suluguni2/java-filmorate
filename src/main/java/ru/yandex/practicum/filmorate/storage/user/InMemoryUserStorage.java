@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.FriendshipStatus;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
@@ -12,7 +13,7 @@ import java.util.*;
 public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
     private long nextId = 1;
-    private final Map<Long, Set<Long>> userFriends = new HashMap<>();
+    private final Map<Long, Map<Long, FriendshipStatus>> userFriends = new HashMap<>();
 
     @Override
     public void clearUsers() {
@@ -48,9 +49,9 @@ public class InMemoryUserStorage implements UserStorage {
             throw new NotFoundException("Пользователь с id=" + friendId + " не найден");
         }
 
-        userFriends.computeIfAbsent(userId, id -> new HashSet<>()).add(friendId);
-        userFriends.computeIfAbsent(friendId, id -> new HashSet<>()).add(userId);
         log.info("Пользователи {} и {} стали друзьями", userId, friendId);
+        userFriends.computeIfAbsent(userId, id -> new HashMap<>()).put(friendId, FriendshipStatus.CONFIRMED);
+        userFriends.computeIfAbsent(friendId, id -> new HashMap<>()).put(userId, FriendshipStatus.CONFIRMED);
     }
 
     @Override
@@ -61,11 +62,13 @@ public class InMemoryUserStorage implements UserStorage {
             throw new NotFoundException("Пользователь с id=" + userId + " не найден");
         }
 
-        Set<Long> friendsIds = userFriends.get(userId);
+        Map<Long, FriendshipStatus> friendsIds = userFriends.get(userId);
         if (friendsIds == null) {
             return Collections.emptyList();
         }
-        return friendsIds.stream()
+        return friendsIds
+                .keySet()
+                .stream()
                 .map(users::get)
                 .toList();
     }
@@ -80,11 +83,14 @@ public class InMemoryUserStorage implements UserStorage {
             log.error("Пользователь с id={} не найден", friendId);
             throw new NotFoundException("Пользователь с id=" + friendId + " не найден");
         }
-        if (userFriends.get(userId) != null) {
-            userFriends.get(userId).remove(friendId);
+        Map<Long, FriendshipStatus> userFriendMap = userFriends.get(userId);
+        if (userFriendMap != null) {
+            userFriendMap.remove(friendId);
         }
-        if (userFriends.get(friendId) != null) {
-            userFriends.get(friendId).remove(userId);
+
+        userFriendMap = userFriends.get(friendId);
+        if (userFriendMap != null) {
+            userFriendMap.remove(userId);
         }
         log.info("Пользователь с id={} удаляет из друзей пользователя с id={}", userId, friendId);
     }
@@ -100,14 +106,15 @@ public class InMemoryUserStorage implements UserStorage {
             log.error("Пользователь с id={} не найден", otherUserId);
             throw new NotFoundException("Пользователь с id=" + otherUserId + " не найден");
         }
-        Set<Long> friends1 = userFriends.get(userId);
-        Set<Long> friends2 = userFriends.get(otherUserId);
+        Map<Long, FriendshipStatus> friends1 = userFriends.get(userId);
+        Map<Long, FriendshipStatus> friends2 = userFriends.get(otherUserId);
 
         if (friends1 == null || friends2 == null) {
             return Collections.emptyList();
         }
-        return friends1.stream()
-                .filter(friends2::contains)
+        return friends1.keySet()
+                .stream()
+                .filter(friends2::containsKey)
                 .map(users::get)
                 .toList();
     }
