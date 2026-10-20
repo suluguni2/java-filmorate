@@ -24,6 +24,14 @@ public class ErrorHandler {
                 .body(new ErrorResponse("Объект не найден", e.getMessage()));
     }
 
+    @ExceptionHandler({org.springframework.dao.DataIntegrityViolationException.class,
+            org.springframework.http.converter.HttpMessageNotReadableException.class,
+            org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<ErrorResponse> handleInvalidRequest(Exception e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("Некорректный запрос", "Проверьте значения полей и уникальность данных"));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralException(Exception e) {
         log.error("Внутренняя ошибка сервера: {}", e.getMessage(), e);
