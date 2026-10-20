@@ -51,7 +51,6 @@ public class InMemoryUserStorage implements UserStorage {
 
         log.info("Пользователи {} и {} стали друзьями", userId, friendId);
         userFriends.computeIfAbsent(userId, id -> new HashMap<>()).put(friendId, FriendshipStatus.CONFIRMED);
-        userFriends.computeIfAbsent(friendId, id -> new HashMap<>()).put(userId, FriendshipStatus.CONFIRMED);
     }
 
     @Override
@@ -88,10 +87,6 @@ public class InMemoryUserStorage implements UserStorage {
             userFriendMap.remove(friendId);
         }
 
-        userFriendMap = userFriends.get(friendId);
-        if (userFriendMap != null) {
-            userFriendMap.remove(userId);
-        }
         log.info("Пользователь с id={} удаляет из друзей пользователя с id={}", userId, friendId);
     }
 

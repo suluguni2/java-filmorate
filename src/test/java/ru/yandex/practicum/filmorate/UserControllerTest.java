@@ -4,23 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(UserController.class)
-@Import({UserService.class, InMemoryUserStorage.class})
+@org.springframework.boot.test.context.SpringBootTest
+@org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+@org.springframework.transaction.annotation.Transactional
 
 class UserControllerTest {
 
@@ -111,7 +107,7 @@ class UserControllerTest {
     }
 
     @Test
-    void clearUsers_shouldResetIdsAndNotRestoreFriends() throws Exception {
+    void clearUsers_shouldRemoveUsersAndFriends() throws Exception {
         User user = createUser("first");
         User friend = createUser("second");
         mockMvc.perform(put("/users/" + user.getId() + "/friends/" + friend.getId())).andExpect(status().isOk());
@@ -119,7 +115,6 @@ class UserControllerTest {
         userController.clearUsers();
 
         User newUser = createUser("third");
-        assertEquals(1, newUser.getId());   // id начался заново
 
         mockMvc.perform(get("/users/" + newUser.getId() + "/friends"))
                 .andExpect(status().isOk())
