@@ -7,7 +7,10 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.BaseRepository;
 import ru.yandex.practicum.filmorate.storage.mapper.GenreRowMapper;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class GenreDbStorage extends BaseRepository<Genre> {
@@ -22,5 +25,26 @@ public class GenreDbStorage extends BaseRepository<Genre> {
     public Genre findById(long id) {
         return findOne("SELECT * FROM genres WHERE id = ?", id)
                 .orElseThrow(() -> new NotFoundException("Genre с id=" + id + " не найден"));
+    }
+
+    public void validateGenreIds(Set<Long> genreIds) {
+        if (genreIds.isEmpty()) {
+            return;
+        }
+        String placeholders = String.join(
+                ", ",
+                Collections.nCopies(genreIds.size(), "?")
+        );
+        String sql = "SELECT id FROM genres WHERE id IN (" + placeholders + ")";
+        List<Long> existingIds = jdbc.queryForList(
+                sql,
+                Long.class,
+                genreIds.toArray()
+        );
+        if (!new HashSet<>(existingIds).containsAll(genreIds)) {
+            throw new NotFoundException(
+                    "Один или несколько жанров не найдены"
+            );
+        }
     }
 }
