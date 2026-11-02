@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -13,11 +12,15 @@ import java.util.List;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class UserService {
     private static final String EMAIL_PATTERN = "@";
 
     private final UserStorage userStorage;
+
+
+    public UserService(UserStorage userStorage) {
+        this.userStorage = userStorage;
+    }
 
     public void addFriend(long userId, long friendId) {
         if (userId == friendId) {
@@ -48,16 +51,25 @@ public class UserService {
     }
 
     public User create(User user) {
+        log.info("Получен запрос на создание пользователя с логином: {}", user.getLogin());
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+            log.info("Имя пользователя не указано, установлено значение логина: {}", user.getLogin());
+        }
         validateUser(user);
         return userStorage.create(user);
     }
 
     public User update(User user) {
+        log.info("Получен запрос на обновление пользователя с id={}", user.getId());
         if (user.getId() == null) {
             log.error("Id пользователя не указан при обновлении");
             throw new ValidationException("Id пользователя должен быть указан");
         }
         validateUser(user);
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         return userStorage.update(user);
     }
 
