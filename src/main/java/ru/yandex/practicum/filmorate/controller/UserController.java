@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class UserController {
-    final UserService userService;
+    private final UserService userService;
 
     @DeleteMapping
     public void clearUsers() {

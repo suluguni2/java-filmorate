@@ -1,20 +1,23 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.genre.GenreDbStorage;
+import ru.yandex.practicum.filmorate.storage.mpa.MpaDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class FilmService {
     private static final int MAX_DESCRIPTION_LENGTH = 200;
@@ -23,6 +26,18 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+
+    private final GenreDbStorage genreStorage;
+    private final MpaDbStorage mpaStorage;
+
+    public FilmService(FilmStorage filmStorage,
+                       UserStorage userStorage,
+                       GenreDbStorage genreStorage, MpaDbStorage mpaStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
+        this.genreStorage = genreStorage;
+        this.mpaStorage = mpaStorage;
+    }
 
     public void addLike(long filmId, long userId) {
         if (!userStorage.isUserExist(userId)) {
@@ -79,6 +94,23 @@ public class FilmService {
     }
 
     private void validateFilm(Film film) {
+        if (film.getMpa() == null || film.getMpa().getId() == null) {
+            throw new ValidationException("Необходимо указать рейтинг фильма");
+        }
+        mpaStorage.findById(film.getMpa().getId());
+        if (film.getGenres() != null) {
+            Set<Long> genreIds = new HashSet<>();
+            for (Genre genre : film.getGenres()) {
+                if (genre == null || genre.getId() == null) {
+                    throw new ValidationException(
+                            "Необходимо указать id жанра"
+                    );
+                }
+                genreIds.add(genre.getId());
+            }
+            genreStorage.validateGenreIds(genreIds);
+        }
+
         if (film.getName() == null || film.getName().isBlank()) {
             log.error("Название фильма не может быть пустым");
             throw new ValidationException("Название фильма не может быть пустым");
